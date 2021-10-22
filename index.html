@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+		<form id="form">
+    <button onclick="passwordToCompare()">Enter</button>
+  </form>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+  <script>
+    const password = '21232f297a57a5a743894a0e4a801fc3'; // пароль в зашифрованном виде
+    value = false;
+
+    preventCopy = (value) => {
+      // Блокировка скриншота
+      document.addEventListener('keyup', (event) => {
+        if (event.key == 'PrintScreen') {
+          navigator.clipboard.writeText('');
+          alert('Screenshots disabled!');
+        }
+      });
+      // Запрет на перетаскивание элемента или выделенного текста
+      document.ondragstart = () => value;
+      // Запрет вызова контекстного меню
+      document.oncontextmenu = () => value;
+      // Запрет выделения текста
+      document.onselectstart = () => value;
+    };
+    preventCopy(value);
+
+    passwordToCompare = () => {
+      event.preventDefault();
+
+      input = prompt('Enter the password:', ''); // считываем введеный пароль
+      hash = CryptoJS.MD5(input); // Хешируем введённое значение из формы 
+      if (password == hash) { // сравниваем хеши
+        value = !value;
+        preventCopy(value);
+        alert('Password is correct!');
+      } else alert('Password do not match')
+    }
+  </script>
+  
+  <div>Try to copy this :)</div>
+  
+</body>
