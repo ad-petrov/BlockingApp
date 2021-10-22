@@ -78,17 +78,15 @@ namespace TIMP
 
         static void Deactivate()
         {
-            for (int i = 2; i < Template.Count; i++)
+            for (int i = 1; i < Template.Count; i++)
             {
                 if (!File.Exists(Template[i])) continue;
                 Free(Template[i]);
             }
-            Template[1] = "0";
             Free(TemplateFile);
             using (var file = new StreamWriter(File.OpenWrite(TemplateFile)))
             {
                 file.WriteLine(Template[0]);
-                file.WriteLine(Template[1]);
             }
             Protect(TemplateFile);
             isProtectionActive = false;
@@ -96,7 +94,7 @@ namespace TIMP
 
         static void Activate()
         {
-            for (int i = 2; i < Template.Count; i++)
+            for (int i = 1; i < Template.Count; i++)
             {
                 if (!File.Exists(Template[i]))
                 {
@@ -104,12 +102,10 @@ namespace TIMP
                 }
                 Protect(Template[i]);
             }
-            Template[1] = "1";
             Free(TemplateFile);
             using (var file = new StreamWriter(File.OpenWrite(TemplateFile)))
             {
                 file.WriteLine(Template[0]);
-                file.WriteLine(Template[1]);
             }
             Protect(TemplateFile);
             isProtectionActive = true;
@@ -126,7 +122,7 @@ namespace TIMP
             var fileCopy = "." + TemplateFile;
             using (var t = File.CreateText(fileCopy))
             {
-                for (int i = 2; i < Template.Count; i++)
+                for (int i = 1; i < Template.Count; i++)
                 {
                     t.WriteLine(Template[i]);
                 }
@@ -134,12 +130,12 @@ namespace TIMP
             }
             Process p;
             if (WindowsPlatformIDs.Contains(System.Environment.OSVersion.Platform)) p = Process.Start("notepad.exe", fileCopy);
-            else p = Process.Start("nano", fileCopy); //вроде так?
+            else p = Process.Start("nano", fileCopy); 
             p.WaitForExit();
             if (File.Exists(fileCopy))
             {
                 var t = File.ReadLines(fileCopy);
-                Template = Template.GetRange(0, 2).Concat(t).ToList();
+                Template = Template.GetRange(0, 1).Concat(t).ToList();
                 Free(TemplateFile);
                 File.WriteAllLines(TemplateFile, Template);
                 Protect(TemplateFile);
@@ -254,7 +250,6 @@ namespace TIMP
                     {
                         using (var hashf = SHA256.Create())
                             file.WriteLine(Encoding.Default.GetString(hashf.ComputeHash(Encoding.Default.GetBytes(password))));
-                        file.WriteLine(0);
                     }
                 }
                 else
@@ -264,7 +259,7 @@ namespace TIMP
                         Template[0] = Encoding.Default.GetString(hashf.ComputeHash(Encoding.Default.GetBytes(password)));
                         using (var file = new StreamWriter(File.OpenWrite(TemplateFile)))
                         {
-                            file.WriteLine(Template[0]);
+                            file.Write(Template[0]);
                         }
                     }
                 }
@@ -302,7 +297,7 @@ namespace TIMP
         private void confirmFilesClick(object sender, RoutedEventArgs e)
         {
             Free(TemplateFile);
-            Template = Template.GetRange(0, 2).Concat(files).ToList();
+            Template = Template.GetRange(0, 1).Concat(files).ToList();
             File.WriteAllLines(TemplateFile, Template);
             Protect(TemplateFile);
             Activate();
